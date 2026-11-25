@@ -20,3 +20,16 @@ Before publishing a build, test it on a clean Windows 7 SP1 32-bit machine:
 3. Add, remove, and switch a music source.
 4. Start once without network access.
 5. Rename the portable `userData` directory and start again.
+
+## Collecting a failure log
+
+The application writes a diagnostic header to `main.log` on every start. It
+contains the Windows and Electron versions, x86/Win7 build flag, GPU feature
+status, user-data and log paths, startup arguments with sensitive values
+filtered, and uncaught errors. It does not record account credentials, cookies,
+search terms, or source contents.
+
+For a machine that shows no window, copy the newest `main.log` from the `logs`
+folder beside the portable data directory and send it with the exact action
+that failed. The first `Runtime diagnostics` block and the last error are the
+most useful parts.
