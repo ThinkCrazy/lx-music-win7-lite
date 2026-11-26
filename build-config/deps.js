@@ -43,8 +43,8 @@ const replaceSqliteLib = async(arch) => {
   }
   console.log(filePath)
   const targetPath = path.join(__dirname, '../node_modules/better-sqlite3/build/Release/better_sqlite3.node')
-  await fs.promises.unlink(targetPath).catch(_ => _)
-  await fs.promises.copyFile(filePath, targetPath)
+  fs.mkdirSync(path.dirname(targetPath), { recursive: true })
+  fs.copyFileSync(filePath, targetPath)
 }
 exports.copyLib = async(arch = process.arch, replaceLocal = false) => {
   if (process.platform === 'linux' || replaceLocal) {
