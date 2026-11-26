@@ -9,7 +9,9 @@ only the runtime packages needed by the legacy target. The required versions
 are checked by `build-config/verify-win7.js`; change them deliberately in both
 that check and `.github/workflows/win7-lite.yml`.
 
-Run the build from GitHub Actions with **Win7 x86 Lite**. The resulting 7z
+Run the **Win7 x86 Lite** workflow from GitHub Actions. The general release
+workflow is manual-only, so pushes to `master` do not start Linux, macOS, or
+other Windows package jobs. The resulting 7z
 archive is a portable x86 build. It creates `portable/userData` beside the
 executable, does not use the updater, and disables GPU
 hardware acceleration at startup, which avoids common Win7 driver failures.
