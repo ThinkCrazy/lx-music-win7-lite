@@ -18,7 +18,10 @@ const { Worker, isMainThread, parentPort } = require('worker_threads')
 
 function build() {
   console.time('build')
-  del.sync(['dist/**', 'build/**'])
+  // Remove only the two root-level build outputs. A recursive `build/**`
+  // pattern can also match the build-config native library directory on
+  // Windows, deleting the Win7 x86 SQLite binary before packaging.
+  del.sync(['dist', 'build'])
 
   const spinners = new Spinnies({ color: 'blue' })
   spinners.add('main', { text: 'main building' })

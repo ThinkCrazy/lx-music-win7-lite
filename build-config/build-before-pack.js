@@ -4,6 +4,8 @@
 const { Arch } = require('electron-builder')
 // const nodeAbi = require('node-abi')
 const { beforePack, copyLib } = require('./deps')
+const fs = require('fs')
+const path = require('path')
 
 // const better_sqlite3_fileNameMap = {
 //   [Arch.x64]: 'linux-x64',
@@ -33,6 +35,10 @@ const archMap = {
 module.exports = async(context) => {
   await beforePack()
   const { arch } = context
+  if (arch === Arch.ia32) {
+    const sqliteBinary = path.join(__dirname, 'lib', 'better_sqlite3_win32-ia32.node')
+    if (!fs.existsSync(sqliteBinary)) throw new Error(`Missing Win7 x86 SQLite binary: ${sqliteBinary}`)
+  }
   const electronVersion = context.packager?.info?._framework?.version ?? require('../package.json').devDependencies.electron.replace(/^[^\d]*?(\d+)/, '$1')
   await copyLib(archMap[arch], parseInt(electronVersion) == 22)
   // const electronNodeAbi = nodeAbi.getAbi(electronVersion, 'electron')
