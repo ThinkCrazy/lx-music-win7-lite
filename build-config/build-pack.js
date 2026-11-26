@@ -36,8 +36,10 @@ const options = {
     'node_modules/electron-font-manager/package.json',
     'node_modules/electron-font-manager/build/Release/font_manager.node',
     'node_modules/node-gyp-build',
-    'node_modules/bufferutil',
-    'node_modules/utf-8-validate',
+    ...(process.env.BUILD_WIN7 === 'true' ? [] : [
+      'node_modules/bufferutil',
+      'node_modules/utf-8-validate',
+    ]),
     'dist/**/*',
   ],
   asar: {
@@ -53,6 +55,9 @@ const options = {
       repo: 'lx-music-desktop',
     },
   ],
+  // Win7 uses prebuilt native modules. Avoid rebuilding optional WebSocket
+  // addons with the modern runner Node.js during packaging.
+  npmRebuild: process.env.BUILD_WIN7 !== 'true',
 }
 /**
  * @type {import('electron-builder').Configuration}
