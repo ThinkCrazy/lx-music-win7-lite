@@ -1,5 +1,7 @@
 import log from 'electron-log/node'
 import os from 'node:os'
+import path from 'node:path'
+import fs from 'node:fs'
 import { app } from 'electron'
 
 // Keep the first lines of every log useful when a Win7 machine cannot open
@@ -15,6 +17,9 @@ let initialized = false
 export const initLog = () => {
   if (initialized) return
   initialized = true
+  const logsPath = app.getPath('logs')
+  fs.mkdirSync(logsPath, { recursive: true })
+  log.transports.file.resolvePathFn = () => path.join(logsPath, 'main.log')
   log.transports.file.level = 'info'
   log.info('========== Application start ==========')
   log.info('Runtime diagnostics', {
