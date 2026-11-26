@@ -128,14 +128,16 @@ export const applyElectronEnvParams = () => {
 }
 
 export const setUserDataPath = () => {
-  // windows平台下如果应用目录下存在 portable 文件夹则将数据存在此文件下
+  // Win7 x86 builds are portable; other builds opt in with a portable folder.
   if (process.platform == 'win32') {
-    const portablePath = path.join(path.dirname(app.getPath('exe')), '/portable')
-    if (existsSync(portablePath)) {
+    const portablePath = path.join(path.dirname(app.getPath('exe')), 'portable')
+    if ((process.env.BUILD_WIN7 == 'true' && process.arch == 'ia32') || existsSync(portablePath)) {
+      mkdirSync(portablePath, { recursive: true })
       app.setPath('appData', portablePath)
-      const appDataPath = path.join(portablePath, '/userData')
-      if (!existsSync(appDataPath)) mkdirSync(appDataPath)
+      const appDataPath = path.join(portablePath, 'userData')
+      mkdirSync(appDataPath, { recursive: true })
       app.setPath('userData', appDataPath)
+      app.setPath('logs', path.join(appDataPath, 'logs'))
     }
   }
 

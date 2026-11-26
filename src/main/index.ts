@@ -1,5 +1,5 @@
 import { app } from 'electron'
-import './utils/logInit'
+import { initLog } from './utils/logInit'
 import '@common/error'
 import {
   initGlobalData,
@@ -27,6 +27,7 @@ initGlobalData()
 initSingleInstanceHandle()
 applyElectronEnvParams()
 setUserDataPath()
+initLog()
 registerDeeplink(init)
 listenerAppEvent(init)
 

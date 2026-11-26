@@ -35,10 +35,8 @@ jobs:
         run: npm ci
       - name: Install frozen Win7 runtime dependencies
         run: npm install --no-save --package-lock=false --ignore-scripts electron@22.3.0 better-sqlite3@12.6.0 undici@5.28.4
-      - name: Rebuild native modules for Electron 22 x86
-        run: npm rebuild better-sqlite3 --runtime=electron --target=22.3.0 --arch=ia32 --dist-url=https://electronjs.org/headers
-      - name: Install native build tools
-        run: python -m pip install setuptools
+      - name: Verify frozen Win7 runtime
+        run: node build-config/verify-win7.js
       - name: Build application
         run: npm run build
       - name: Package Win7 32-bit green build
