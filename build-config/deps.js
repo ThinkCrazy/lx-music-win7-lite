@@ -34,11 +34,12 @@ const replaceSqliteLib = async(arch) => {
   // https://github.com/lyswhut/lx-music-desktop/issues/1102
   // https://github.com/lyswhut/lx-music-desktop/issues/1161
   console.log('replace sqlite lib...')
+  const stagedPath = process.env.WIN7_SQLITE_BINARY
   const bundledPath = path.join(__dirname, `./lib/better_sqlite3_${process.platform}-${arch}.node`)
   const prebuildPath = path.join(__dirname, `../node_modules/better-sqlite3/prebuilds/${process.platform}-${arch}.node`)
-  const filePath = fs.existsSync(prebuildPath) ? prebuildPath : bundledPath
-  if (!fs.existsSync(filePath)) {
-    throw new Error(`Better-sqlite3 binary not found. Checked: ${prebuildPath} and ${bundledPath}`)
+  const filePath = [stagedPath, prebuildPath, bundledPath].find(file => file && fs.existsSync(file))
+  if (!filePath) {
+    throw new Error(`Better-sqlite3 binary not found. Checked: ${stagedPath}, ${prebuildPath}, and ${bundledPath}`)
   }
   console.log(filePath)
   const targetPath = path.join(__dirname, '../node_modules/better-sqlite3/build/Release/better_sqlite3.node')

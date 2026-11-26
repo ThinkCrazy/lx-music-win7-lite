@@ -37,6 +37,12 @@ jobs:
         run: npm install --no-save --package-lock=false --ignore-scripts electron@22.3.0 better-sqlite3@12.6.0 undici@5.28.4
       - name: Verify frozen Win7 runtime
         run: node build-config/verify-win7.js
+      - name: Stage Win7 x86 SQLite binary
+        shell: pwsh
+        run: |
+          $staged = Join-Path $env:RUNNER_TEMP 'better_sqlite3_win32-ia32.node'
+          Copy-Item 'build-config/lib/better_sqlite3_win32-ia32.node' $staged -Force
+          "WIN7_SQLITE_BINARY=$staged" >> $env:GITHUB_ENV
       - name: Build application
         run: npm run build
       - name: Package Win7 32-bit green build

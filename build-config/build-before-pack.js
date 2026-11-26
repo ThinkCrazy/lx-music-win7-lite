@@ -38,8 +38,9 @@ module.exports = async(context) => {
   if (arch === Arch.ia32) {
     const sqliteBinary = path.join(__dirname, 'lib', 'better_sqlite3_win32-ia32.node')
     const prebuildBinary = path.join(__dirname, '../node_modules/better-sqlite3/prebuilds/win32-ia32.node')
-    if (!fs.existsSync(sqliteBinary) && !fs.existsSync(prebuildBinary)) {
-      throw new Error(`Missing Win7 x86 SQLite binary: ${sqliteBinary} or ${prebuildBinary}`)
+    const stagedBinary = process.env.WIN7_SQLITE_BINARY
+    if (!fs.existsSync(sqliteBinary) && !fs.existsSync(prebuildBinary) && !(stagedBinary && fs.existsSync(stagedBinary))) {
+      throw new Error(`Missing Win7 x86 SQLite binary: ${stagedBinary}, ${sqliteBinary}, or ${prebuildBinary}`)
     }
   }
   const electronVersion = context.packager?.info?._framework?.version ?? require('../package.json').devDependencies.electron.replace(/^[^\d]*?(\d+)/, '$1')
