@@ -37,7 +37,10 @@ module.exports = async(context) => {
   const { arch } = context
   if (arch === Arch.ia32) {
     const sqliteBinary = path.join(__dirname, 'lib', 'better_sqlite3_win32-ia32.node')
-    if (!fs.existsSync(sqliteBinary)) throw new Error(`Missing Win7 x86 SQLite binary: ${sqliteBinary}`)
+    const prebuildBinary = path.join(__dirname, '../node_modules/better-sqlite3/prebuilds/win32-ia32.node')
+    if (!fs.existsSync(sqliteBinary) && !fs.existsSync(prebuildBinary)) {
+      throw new Error(`Missing Win7 x86 SQLite binary: ${sqliteBinary} or ${prebuildBinary}`)
+    }
   }
   const electronVersion = context.packager?.info?._framework?.version ?? require('../package.json').devDependencies.electron.replace(/^[^\d]*?(\d+)/, '$1')
   await copyLib(archMap[arch], parseInt(electronVersion) == 22)
