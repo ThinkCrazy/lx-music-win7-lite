@@ -1,7 +1,8 @@
 process.env.NODE_ENV = 'production'
 
 const chalk = require('chalk')
-const del = require('del')
+const fs = require('fs')
+const os = require('os')
 const webpack = require('webpack')
 const Spinnies = require('spinnies')
 
@@ -18,10 +19,19 @@ const { Worker, isMainThread, parentPort } = require('worker_threads')
 
 function build() {
   console.time('build')
-  // Remove only the two root-level build outputs. A recursive `build/**`
-  // pattern can also match the build-config native library directory on
-  // Windows, deleting the Win7 x86 SQLite binary before packaging.
-  del.sync(['dist', 'build'])
+  const win7Sqlite = require('path').join(__dirname, 'lib', 'better_sqlite3_win32-ia32.node')
+  const win7SqliteBackup = require('path').join(os.tmpdir(), 'lx-music-win7-better_sqlite3.node')
+  if (process.env.BUILD_WIN7 === 'true' && fs.existsSync(win7Sqlite)) {
+    fs.copyFileSync(win7Sqlite, win7SqliteBackup)
+  }
+  // Remove only the root-level output directories. Do not use a glob here:
+  // on Windows it can match build-config/lib and remove the Win7 SQLite DLL.
+  for (const outputDir of ['dist', 'build']) {
+    fs.rmSync(require('path').join(process.cwd(), outputDir), { recursive: true, force: true })
+  }
+  if (process.env.BUILD_WIN7 === 'true' && fs.existsSync(win7SqliteBackup)) {
+    fs.copyFileSync(win7SqliteBackup, win7Sqlite)
+  }
 
   const spinners = new Spinnies({ color: 'blue' })
   spinners.add('main', { text: 'main building' })
